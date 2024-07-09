@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title class>{{ article.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">{{ article.title }}</h1>
+    <p class="mb-4">{{ article.content }}</p>
+    <p class="text-gray-500"><em>Created at: {{ article.created_at }}</em></p>
+    <p class="text-gray-500 mb-4"><em>Updated at: {{ article.updated_at }}</em></p>
+    <p class="text-gray-500 mb-4"><em>Likes: {{ article.likes }}</em></p>
+    <form action="/article/like/{{ article.id }}" method="POST" style="display:inline;">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Like
+        </button>
+    </form>
+    <a href="/article/edit/{{ article.id }}"
+       class="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">Edit</a>
+    <a href="/" class="inline-block bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-700">Back to List</a>
+    <h2 class="text-2xl mt-6">Comments ({{ comments|length }})</h2>
+    <h3 class="text-xl mt-6">Comment:</h3>
+    <form action="/comment/add/{{ article.id }}" method="POST">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" placeholder="Your name" class="border rounded px-3 py-2">
+        </div>
+        <div>
+            <label for="comment">Comment</label>
+            <textarea name="comment" id="comment" placeholder="Your comment" class="border rounded px-3 py-2"
+                      required></textarea>
+        </div>
+        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">
+            Submit
+        </button>
+    </form>
+    <ul>
+        {% for comment in comments %}
+            <li class="border-b py-2">
+                <p><strong>{{ comment.name }}</strong> ({{ comment.created_at }})</p>
+                <p>{{ comment.comment }}</p>
+                <p>Likes: {{ comment.likes }} </p>
+                <form action="/comment/like/{{ comment.id }}/{{ article.id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                        Like
+                    </button>
+                </form>
+                <form action="/comment/delete/{{ comment.id }}/{{ article.id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                        Delete
+                    </button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
