@@ -9,6 +9,7 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Respect\Validation\Validator as v;
 
 class ArticleController
 {
@@ -71,9 +72,14 @@ class ArticleController
 
     public function store(): void
     {
+        $title = $_POST['title'] ?? '';
+        $content = $_POST['content'] ?? '';
+        $contentValidator = v::notEmpty();
+        if (!$contentValidator->validate($content)) {
+            echo "Content cannot be empty";
+            return;
+        }
         try {
-            $title = $_POST['title'] ?? '';
-            $content = $_POST['content'] ?? '';
             $this->article->create($title, $content);
             $this->logger->info('Created new article with title: ' . $title);
             header('Location: /');
@@ -85,10 +91,15 @@ class ArticleController
 
     public function update(array $vars): void
     {
+        $id = $vars['id'];
+        $title = $_POST['title'] ?? '';
+        $content = $_POST['content'] ?? '';
+        $contentValidator = v::notEmpty();
+        if (!$contentValidator->validate($content)) {
+            echo "Content cannot be empty";
+            return;
+        }
         try {
-            $id = $vars['id'];
-            $title = $_POST['title'] ?? '';
-            $content = $_POST['content'] ?? '';
             $this->article->update($id, $title, $content);
             $this->logger->info('Updated Article with id:' . $id);
             header('Location: /article/' . $id);
