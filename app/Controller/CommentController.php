@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Model\Comments;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Respect\Validation\Validator as v;
 
 
 class CommentController
@@ -30,10 +31,15 @@ class CommentController
 
     public function add(array $vars): void
     {
+        $articleId = $vars['id'];
+        $name = $_POST['name'] ?? 'anonymous';
+        $comment = $_POST['comment'] ?? '';
+        $commentValidator = v::notEmpty()->length(1, 500);
+        if (!$commentValidator->validate($comment)) {
+            echo "Comment cannot be empty or exceed 500 characters";
+            return;
+        }
         try {
-            $articleId = $vars['id'];
-            $name = $_POST['name'] ?? 'anonymous';
-            $comment = $_POST['comment'] ?? '';
             if ($comment !== '') {
                 $this->comments->addComment($articleId, $name, $comment);
                 $this->logger->info('Added comment to id: ' . $articleId);
