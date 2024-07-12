@@ -82,15 +82,6 @@ SET title=:title, content=:content, updated_at=CURRENT_TIMESTAMP WHERE id=:id");
         $article->execute();
     }
 
-    public function getLikes(int $id): int
-    {
-        $article = $this->db->prepare("SELECT likes FROM articles WHERE id=:id");
-        $article->bindValue(":id", $id, SQLITE3_INTEGER);
-        $result = $article->execute();
-        $row = $result->fetchArray(SQLITE3_ASSOC);
-        return $row ? (int)$row['likes'] : 0;
-    }
-
     public function like(int $id): void
     {
         $article = $this->db->prepare("UPDATE articles SET likes = likes + 1 WHERE id=:id");
